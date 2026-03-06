@@ -1,0 +1,59 @@
+# Business — Generative Engine Optimization Map
+
+---
+
+## Pages
+
+### בית
+https://example.com
+פלטפורמה מתקדמת ללימוד היסטוריה לבגרות אונליין עם תכנית לימודים ממוקדת, תרגולים אינטראקטיביים והכנה מושלמת למבחן. התחל עכשיו!
+
+### תכנית לימודים
+https://example.com/curriculum
+גלה את תכנית הלימודים המקיפה שלנו להיסטוריה לבגרות 5 יחידות. כל הנושאים, החומרים והמיומנויות שתצטרך להצלחה מובטחת במבחן.
+
+### תרגול
+https://example.com/practice
+שפר את הציונים שלך עם תרגולים ממוקדים, מבחנים אמיתיים ומשוב מיידי. כלי התרגול המתקדמים שלנו יבטיחו את הצלחתך בבגרות בהיסטוריה.
+
+### צור קשר
+https://example.com/contact
+צור קשר עם הצוות שלנו לכל שאלה או בקשה. אנחנו כאן לעזור לך להצליח בלימודי ההיסטוריה לבגרות. פנה אלינו עכשיו וקבל מענה מהיר!
+
+### Products
+https://example.com/products
+המוצרים שלנו - היסטוריה לבגרות
+
+### Product Detail
+https://example.com/product/:slug
+פרטי המוצר - היסטוריה לבגרות
+
+### Category
+https://example.com/category/:slug
+מוצרים - היסטוריה לבגרות
+
+## Legal & Policy
+
+### Privacy Policy
+https://example.com/privacy
+Information about how user data is collected, stored, and protected.
+
+### Terms & Conditions
+https://example.com/terms
+Legal terms describing service usage, rights, and policies.
+
+### Accessibility Statement
+https://example.com/accessibility
+Information about WCAG compliance and accessibility features.
+
+---
+
+# Business Context (for LLM understanding)
+
+## About Business
+---
+
+# Additional Resources
+
+- **Sitemap**: https://example.com/sitemap.xml
+- **Robots.txt**: https://example.com/robots.txt

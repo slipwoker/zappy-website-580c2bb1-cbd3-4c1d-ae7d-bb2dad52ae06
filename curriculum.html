@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="index, follow">
+    <title>תכנית הלימודים המלאה שלנו — היסטוריה לבגרות</title>
+    <meta name="description" content="גלה את תכנית הלימודים המקיפה שלנו להיסטוריה לבגרות 5 יחידות. כל הנושאים, החומרים והמיומנויות שתצטרך להצלחה מובטחת במבחן.">
+    <meta name="keywords" content="תכנית לימודים היסטוריה, היסטוריה לבגרות 5 יחידות, חומרי לימוד היסטוריה, נושאים לבגרות, סילבוס היסטוריה">
+    
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48x48.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/assets/favicon-512x512.png">
+    <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+    <!-- Zappy Analytics -->
+<script>
+(function() {
+  'use strict';
+  
+  // Configuration
+  var config = {
+    websiteId: '580c2bb1-cbd3-4c1d-ae7d-bb2dad52ae06',
+    apiUrl: 'https://api.zappy5.com/api/analytics/track',
+    sessionDuration: 30 * 60 * 1000, // 30 minutes
+    visitorDuration: 30 * 24 * 60 * 60 * 1000, // 30 days
+    trackPageViews: true,
+    trackClicks: true,
+    trackFormSubmissions: true
+  };
+  
+  // Generate or retrieve persistent visitor ID (30 days)
+  function getVisitorId() {
+    var visitorKey = 'zappy_visitor_' + config.websiteId;
+    var visitor = null;
+    
+    try {
+      visitor = localStorage.getItem(visitorKey);
+      if (visitor) {
+        var visitorData = JSON.parse(visitor);
+        var now = Date.now();
+        
+        // Check if visitor ID is still valid (30 days)
+        if (now - visitorData.created < config.visitorDuration) {
+          // Update last seen timestamp
+          visitorData.lastSeen = now;
+          localStorage.setItem(visitorKey, JSON.stringify(visitorData));
+          return visitorData.id;
+        }
+      }
+    } catch (e) {
+      console.warn('Zappy Analytics: LocalStorage not available');
+    }
+    
+    // Generate new visitor ID
+    var newVisitorId = 'zv_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    
+    try {
+      localStorage.setItem(visitorKey, JSON.stringify({
+        id: newVisitorId,
+        created: Date.now(),
+        lastSeen: Date.now()
+      }));
+    } catch (e) {
+      // Continue without local storage
+    }
+    
+    return newVisitorId;
+  }
+  
+  // Generate or retrieve session ID (30 minutes)
+  function getSessionId() {
+    var sessionKey = 'zappy_session_' + config.websiteId;
+    var session = null;
+    
+    try {
+      session = sessionStorage.getItem(sessionKey);
+      if (session) {
+        var sessionData = JSON.parse(session);
+        var now = Date.now();
+        
+        // Check if session is still valid
+        if (now - sessionData.timestamp < config.sessionDuration) {
+          // Update timestamp
+          sessionData.timestamp = now;
+          sessionStorage.setItem(sessionKey, JSON.stringify(sessionData));
+          return sessionData.id;
+        }
+      }
+    } catch (e) {
+      console.warn('Zappy Analytics: SessionStorage not available');
+    }
+    
+    // Generate new session ID
+    var newSessionId = 'zs_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    
+    try {
+      sessionStorage.setItem(sessionKey, JSON.stringify({
+        id: newSessionId,
+        timestamp: Date.now()
+      }));
+    } catch (e) {
+      // Continue without session storage
+    }
+    
+    return newSessionId;
+  }
+  
+  var visitorId = getVisitorId();
+  var sessionId = getSessionId();
+  
+  // Track an event
+  function trackEvent(eventType, data) {
+    data = data || {};
+    
+    var eventData = {
+      website_id: config.websiteId,
+      event_type: eventType,
+      page_path: window.location.pathname,
+      referrer: document.referrer || 'direct',
+      visitor_id: visitorId,
+      session_id: sessionId,
+      metadata: data
+    };
+    
+    // Use sendBeacon if available (better for page unload events)
+    if (navigator.sendBeacon) {
+      var blob = new Blob([JSON.stringify(eventData)], { type: 'application/json' });
+      navigator.sendBeacon(config.apiUrl, blob);
+    } else {
+      // Fallback to fetch
+      fetch(config.apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(eventData),
+        keepalive: true
+      }).catch(function(error) {
+        console.warn('Zappy Analytics: Failed to track event', error);
+      });
+    }
+  }
+  
+  // Track page view
+  if (config.trackPageViews) {
+    trackEvent('pageview', {
+      title: document.title,
+      url: window.location.href
+    });
+  }
+  
+  // Track clicks on important elements
+  if (config.trackClicks) {
+    document.addEventListener('click', function(e) {
+      var target = e.target;
+      
+      // Track button clicks (counted as actions)
+      if (target.tagName === 'BUTTON' || target.closest('button')) {
+        var button = target.tagName === 'BUTTON' ? target : target.closest('button');
+        trackEvent('click', {
+          element: 'button',
+          text: button.textContent.trim().substring(0, 100),
+          id: button.id || null,
+          class: button.className || null
+        });
+      }
+      
+      // Track link clicks (navigation - not counted as actions)
+      else if (target.tagName === 'A' || target.closest('a')) {
+        var link = target.tagName === 'A' ? target : target.closest('a');
+        trackEvent('navigation', {
+          element: 'link',
+          text: link.textContent.trim().substring(0, 100),
+          href: link.href,
+          external: link.hostname !== window.location.hostname
+        });
+      }
+    }, true);
+  }
+  
+  // Track form submissions
+  if (config.trackFormSubmissions) {
+    document.addEventListener('submit', function(e) {
+      var form = e.target;
+      
+      trackEvent('form_submit', {
+        form_id: form.id || null,
+        form_name: form.name || null,
+        form_action: form.action || null,
+        form_method: form.method || 'GET'
+      });
+    }, true);
+  }
+  
+  // Track time on page (send on page unload)
+  var pageLoadTime = Date.now();
+  
+  window.addEventListener('beforeunload', function() {
+    var timeOnPage = Math.floor((Date.now() - pageLoadTime) / 1000); // in seconds
+    
+    trackEvent('page_unload', {
+      time_on_page: timeOnPage,
+      page_path: window.location.pathname
+    });
+  });
+  
+  // Expose tracking function globally for custom events
+  window.zappyAnalytics = {
+    track: trackEvent,
+    getVisitorId: function() { return visitorId; },
+    getSessionId: function() { return sessionId; }
+  };
+  
+})();
+</script>
+<!-- End Zappy Analytics -->
+    <meta property="og:title" content="תכנית הלימודים המלאה שלנו — היסטוריה לבגרות">
+  <meta property="og:description" content="גלה את תכנית הלימודים המקיפה שלנו להיסטוריה לבגרות 5 יחידות. כל הנושאים, החומרים והמיומנויות שתצטרך להצלחה מובטחת במבחן.">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="he_IL">
+  
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="תכנית הלימודים המלאה שלנו — היסטוריה לבגרות">
+  <meta name="twitter:description" content="גלה את תכנית הלימודים המקיפה שלנו להיסטוריה לבגרות 5 יחידות. כל הנושאים, החומרים והמיומנויות שתצטרך להצלחה מובטחת במבחן.">
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48x48.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/assets/favicon-512x512.png">
+    <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+    <!-- Cookie Consent -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vanilla-cookieconsent@3/dist/cookieconsent.css">
+    <script src="https://cdn.jsdelivr.net/npm/vanilla-cookieconsent@3/dist/cookieconsent.umd.js"></script>
+    <!-- Mickidum Accessibility Toolbar -->
+    <script src="https://cdn.jsdelivr.net/gh/mickidum/acc_toolbar/acctoolbar/acctoolbar.min.js"></script>
+    <link rel="stylesheet" href="/styles.css">
+
+    <style id="zappy-dropdown-submenu-styles">
+      /* ========== DESKTOP DROPDOWN SUBMENU STYLES ========== */
+      /* Base styles for dropdown submenus - parent must be positioned */
+      .nav-menu li:has(.sub-menu), nav li:has(.sub-menu), .navbar li:has(.sub-menu), #navMenu li:has(.sub-menu) { position: relative; }
+      /* Submenu base - hidden by default */
+      .nav-menu .sub-menu, nav .sub-menu, .navbar .sub-menu, #navMenu .sub-menu { display: block !important; position: absolute !important; top: 100%; left: 0; min-width: 220px; background: white; border-radius: 8px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); padding: 8px 0; opacity: 0; visibility: hidden; transform: translateY(10px); transition: all 0.3s ease; z-index: 1000; list-style: none; pointer-events: none; }
+      /* CRITICAL: Desktop hover styles to show dropdown */
+      .nav-menu li:hover > .sub-menu, nav li:hover > .sub-menu, .navbar li:hover > .sub-menu, #navMenu li:hover > .sub-menu { opacity: 1 !important; visibility: visible !important; transform: translateY(0) !important; pointer-events: auto !important; }
+      /* Submenu item styling */
+      .sub-menu li { list-style: none; margin: 0; padding: 0; }
+      .sub-menu a { display: block !important; padding: 10px 16px !important; color: #333 !important; font-weight: 500; text-decoration: none; white-space: nowrap; transition: background-color 0.2s; }
+      .sub-menu a:hover { background-color: #f5f5f5; }
+      /* RTL (Hebrew/Arabic) dropdown positioning */
+      [dir="rtl"] .nav-menu .sub-menu, [dir="rtl"] nav .sub-menu, [dir="rtl"] .navbar .sub-menu, html[lang="he"] .nav-menu .sub-menu, html[lang="he"] nav .sub-menu, html[lang="he"] .navbar .sub-menu, html[lang="ar"] .nav-menu .sub-menu, html[lang="ar"] nav .sub-menu, html[lang="ar"] .navbar .sub-menu { left: auto !important; right: 0 !important; }
+      /* Hide empty dropdown menus */
+      .sub-menu:empty, .sub-menu:not(:has(li:not(.zappy-hidden-menu-item))), .sub-menu:not(:has(li)) { display: none !important; opacity: 0 !important; visibility: hidden !important; pointer-events: none !important; }
+      /* Desktop: show submenu on Menu Group hover */
+      li:has(.menu-group-title):hover > .sub-menu { opacity: 1 !important; visibility: visible !important; transform: translateY(0) !important; pointer-events: auto !important; }
+      /* Menu Group title styling */
+      .nav-menu > li > .menu-group-title, #navMenu > li > .menu-group-title { display: inline-block; padding: 0.5rem 1rem; cursor: default; user-select: none; }
+      
+      /* ========== MOBILE SUBMENU STYLES ========== */
+      @media (max-width: 768px) {
+        .nav-menu .sub-menu, nav .sub-menu, .navbar .sub-menu, #navMenu .sub-menu { position: static !important; transform: none !important; box-shadow: none !important; background: transparent !important; max-height: 0; overflow: hidden; opacity: 0; visibility: hidden; transition: max-height 0.3s ease, opacity 0.3s ease; padding: 0 !important; border-radius: 0 !important; }
+        .sub-menu.mobile-expanded { max-height: 500px !important; opacity: 1 !important; visibility: visible !important; padding: 8px 0 8px 16px !important; }
+        [dir="rtl"] .sub-menu.mobile-expanded, html[lang="he"] .sub-menu.mobile-expanded { padding: 8px 16px 8px 0 !important; }
+        /* Disable hover behavior on mobile */
+        .nav-menu li:hover > .sub-menu, nav li:hover > .sub-menu, .navbar li:hover > .sub-menu, #navMenu li:hover > .sub-menu { opacity: 0; visibility: hidden; pointer-events: none; }
+        .nav-menu li > .sub-menu.mobile-expanded, nav li > .sub-menu.mobile-expanded, .navbar li > .sub-menu.mobile-expanded, #navMenu li > .sub-menu.mobile-expanded { opacity: 1 !important; visibility: visible !important; pointer-events: auto !important; }
+        .nav-menu li:has(.sub-menu), nav li:has(.sub-menu), .navbar li:has(.sub-menu), #navMenu li:has(.sub-menu) { display: flex !important; flex-wrap: wrap !important; align-items: center !important; position: relative !important; min-height: 44px !important; }
+        .nav-menu li:has(.sub-menu) > a, nav li:has(.sub-menu) > a, .navbar li:has(.sub-menu) > a, #navMenu li:has(.sub-menu) > a { flex: 1 !important; min-width: 0 !important; }
+        .nav-menu li:has(.sub-menu) > .menu-group-title, nav li:has(.sub-menu) > .menu-group-title, .navbar li:has(.sub-menu) > .menu-group-title, #navMenu li:has(.sub-menu) > .menu-group-title { flex: 1 !important; min-width: 0 !important; padding: 0 !important; line-height: inherit !important; }
+        .nav-menu li:has(.sub-menu) > .sub-menu, nav li:has(.sub-menu) > .sub-menu, .navbar li:has(.sub-menu) > .sub-menu, #navMenu li:has(.sub-menu) > .sub-menu { flex-basis: 100% !important; width: 100% !important; }
+        .nav-menu li:has(.sub-menu) > a [class*="chevron"], .nav-menu li:has(.sub-menu) > a [class*="arrow"], .nav-menu li:has(.sub-menu) > a .fa-chevron-down, .nav-menu li:has(.sub-menu) > a .fa-angle-down, nav li:has(.sub-menu) > a [class*="chevron"], nav li:has(.sub-menu) > a [class*="arrow"], #navMenu li:has(.sub-menu) > a [class*="chevron"], #navMenu li:has(.sub-menu) > a [class*="arrow"] { display: none !important; visibility: hidden !important; }
+        .mobile-submenu-toggle { display: flex !important; align-items: center !important; justify-content: center !important; width: 44px !important; height: auto !important; background: transparent !important; border: none !important; cursor: pointer !important; color: var(--text-light) !important; position: static !important; flex-shrink: 0 !important; align-self: stretch !important; z-index: 2 !important; padding: 0 !important; margin: 0 !important; }
+        .mobile-submenu-toggle::after { content: '' !important; width: 0 !important; height: 0 !important; border-left: 6px solid transparent !important; border-right: 6px solid transparent !important; border-top: 7px solid currentColor !important; transition: transform 0.3s ease !important; }
+        .mobile-submenu-toggle.expanded::after { transform: rotate(180deg) !important; }
+        .sub-menu a { padding: 10px 0 !important; display: block !important; color: var(--text-light) !important; }
+        .navbar .sub-menu li a, nav.navbar .sub-menu li a, .zappy-products-dropdown .sub-menu a { color: var(--text-light) !important; }
+      }
+      @media (min-width: 769px) { .mobile-submenu-toggle { display: none !important; } }
+    </style>
+
+    <style id="zappy-widget-visibility">
+      #mic-access-tool-general-button, .mic-access-tool-general-button,
+      #mic-init-access-tool .mic-access-tool-general-button, #mic-init-access-tool #mic-access-tool-general-button,
+      ._access-icon, #mic-access-tool-box, .mic-access-tool-box,
+      #mic-init-access-tool #mic-access-tool-box, div[id*="mic-access-tool-box"], ._access-menu {
+        display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important;
+      }
+    </style>
+</head>
+<body>
+
+
+    <div class="mobile-search-panel" id="mobile-search-panel">
+      <div class="search-wrapper">
+        <input type="text" id="mobile-search-input" placeholder="חיפוש מוצרים..." autocomplete="off">
+        <button class="search-submit" id="mobile-search-submit" title="חיפוש">
+          <svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><path d="M21 21l-4.35-4.35"></path></svg>
+        </button>
+        <button class="close-search" id="close-mobile-search">
+          <svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"></path></svg>
+        </button>
+      </div>
+      <div class="search-results" id="mobile-search-results"></div>
+    </div>
+  
+<script>window.ZAPPY_WEBSITE_ID = "580c2bb1-cbd3-4c1d-ae7d-bb2dad52ae06";window.ZAPPY_API_BASE = (window.location.pathname.includes('/preview') ? "https://api.zappy5.com" : "https://api.zappy5.com");</script>
+  <nav class="navbar" dir="rtl">
+  <button class="mobile-toggle" id="mobileToggle" aria-label="Menu">
+    <svg class="hamburger-icon" width="24" height="24" viewbox="0 0 24 24" fill="none">
+      <path d="M3 12h18M3 6h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+    </svg>
+    <svg class="close-icon" width="24" height="24" viewbox="0 0 24 24" fill="none" style="display:none;">
+      <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+    </svg>
+  </button>
+  
+  <button class="phone-header-btn" aria-label="Call">
+    <svg width="20" height="20" viewbox="0 0 24 24" fill="currentColor">
+      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+    </svg>
+  </button>
+  
+  <div class="nav-container">
+    <div class="nav-brand">
+      <a href="/" class="logo-link">
+        <img src="/assets/business-logo.webp" alt="היסטוריה לבגרות" class="logo">
+      </a>
+    </div>
+    
+    <ul class="nav-menu" id="navMenu">
+
+    <li class="menu-item-has-children zappy-products-dropdown">
+      <a href="/products">
+        מוצרים
+        <svg class="dropdown-arrow" width="12" height="12" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M6 9l6 6 6-6"></path>
+        </svg>
+      </a>
+      <ul class="sub-menu" id="zappy-nav-category-links">
+        <li><a href="/products">כל המוצרים</a></li>
+        <!-- Categories will be loaded dynamically -->
+      </ul>
+    </li>
+  <li><a href="/curriculum">תכנית לימודים</a></li><li><a href="/practice">תרגול</a></li><li><a href="/contact">צור קשר</a></li></ul><div class="nav-ecommerce-icons nav-icons-left"><div class="nav-search-box">
+    <input type="text" class="nav-search-input" id="nav-search-input" placeholder="חיפוש מוצרים..." autocomplete="off">
+    <button class="nav-search-btn" id="nav-search-btn" title="חיפוש">
+      <svg class="search-icon" width="18" height="18" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><path d="M21 21l-4.35-4.35"></path></svg>
+    </button>
+    <div class="nav-search-results" id="nav-search-results"></div>
+  </div></div><div class="nav-ecommerce-icons nav-icons-right"><button class="nav-search-toggle" id="mobile-search-toggle" title="חיפוש"><svg width="18" height="18" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><path d="M21 21l-4.35-4.35"></path></svg></button></div>
+    
+    
+  </div>
+</nav>
+
+    <nav class="zappy-catalog-menu rtl" id="zappy-catalog-menu" dir="rtl">
+      <div class="catalog-menu-container">
+        <a href="/products" class="catalog-menu-item catalog-menu-all">כל המוצרים</a>
+        <div class="catalog-menu-categories" id="zappy-category-links">
+          <!-- Categories will be loaded dynamically -->
+        </div>
+      </div>
+    </nav>
+  
+  
+  <main>
+    <section class="curriculum-page-intro-section" data-layout-spec="תכנית לימודים-page-intro">
+  <div class="curriculum-page-intro-container">
+    <div class="curriculum-page-intro-content">
+      <h1>תכנית לימודים בנויה כציר זמן ברור</h1>
+      <p class="curriculum-page-intro-main-text">היחידות בתכנית שלנו עוקבות אחר הכרונולוגיה ההיסטורית ונושאי הבחינה המרכזיים. כל יחידה מציגה את האירועים, הדמויות והרעיונות בהקשר מלא, ומאפשרת לך להבין את הקשרים בין תקופות ולפתח חשיבה היסטורית עמוקה.</p>
+      <p class="curriculum-page-intro-secondary-text">איך מתחילים? בחר את התקופה שמעניינת אותך או שאליה אתה צריך להתכונן, ולאחר מכן תרגל באמצעות המבחנים והתרגילים המותאמים. המערכת שלנו תלווה אותך בכל שלב ותעזור לך לזהות נקודות חוזק ותחומים לשיפור.</p>
+    </div>
+    <div class="curriculum-page-intro-image-wrapper">
+      <img data-placeholder="curriculum-page-intro-image-1" data-context="Monochrome archival photograph with duotone effect for a history education website: a vintage classroom or historical documents spread on a wooden desk, subtle grain texture, editorial style, evokes documentary authenticity and academic rigor" width="600" height="400" src="/assets/site-curriculum-page-intro-image-1.webp" alt="תמונה ארכיונית של כיתת לימוד היסטורית">
+    </div>
+  </div>
+  <div class="curriculum-page-intro-divider-wrapper">
+    <svg data-no-icon-edit="true" aria-hidden="true" viewbox="0 0 1200 8" preserveaspectratio="none" xmlns="http://www.w3.org/2000/svg">
+      <line x1="0" y1="4" x2="1080" y2="4" stroke="var(--primary)" stroke-width="2"></line>
+      <circle cx="1100" cy="4" r="3" fill="var(--primary)"></circle>
+      <circle cx="1130" cy="4" r="3" fill="var(--primary)"></circle>
+      <circle cx="1160" cy="4" r="3" fill="var(--primary)"></circle>
+    </svg>
+  </div>
+</section>
+
+<section class="curriculum-curriculum-section" data-layout-spec="תכנית לימודים-curriculum">
+  <div class="curriculum-container">
+    <div class="curriculum-header">
+      <h2>תכנית הלימודים המלאה</h2>
+      <p class="curriculum-subtitle">מסע מקיף דרך ההיסטוריה המודרנית – 8 יחידות לימוד מובנות להכנה מושלמת לבגרות</p>
+    </div>
+
+    <div class="curriculum-grid">
+      <!-- Unit 1 -->
+      <article class="curriculum-card">
+        <div class="unit-header">
+          <svg data-element-type="icon" data-icon-type="svg" class="unit-icon" width="24" height="24" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+          <h3>יחידה 1: המאה ה-19 – תחילת העידן המודרני</h3>
+        </div>
+        <p class="unit-description">סקירה מקיפה של המהפכות התעשייתיות והפוליטיות שעיצבו את אירופה המודרנית. נבחן את עליית הלאומיות, התפתחות הקפיטליזם, והשינויים החברתיים שהניחו את היסודות למאה ה-20.</p>
+        <p class="unit-tags"><span class="tag">תקופה: 1800-1900</span> <span class="tag">נושא: מהפכות ולאומיות</span> <span class="tag">רמה: בסיסית</span></p>
+      </article>
+
+      <!-- Unit 2 -->
+      <article class="curriculum-card">
+        <div class="unit-header">
+          <svg data-element-type="icon" data-icon-type="svg" class="unit-icon" width="24" height="24" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"></circle>
+            <path d="M12 6V12L16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+          </svg>
+          <h3>יחידה 2: מלחמת העולם הראשונה</h3>
+        </div>
+        <p class="unit-description">ניתוח מעמיק של הגורמים, המהלכים והתוצאות של המלחמה הגדולה. נעמיק בטכנולוגיה צבאית חדשה, מלחמת החפירות, והשפעות המלחמה על החברה והכלכלה האירופית.</p>
+        <p class="unit-tags"><span class="tag">תקופה: 1914-1918</span> <span class="tag">נושא: סכסוך עולמי</span> <span class="tag">רמה: בינונית</span></p>
+      </article>
+
+      <!-- Unit 3 -->
+      <article class="curriculum-card">
+        <div class="unit-header">
+          <svg data-element-type="icon" data-icon-type="svg" class="unit-icon" width="24" height="24" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M21 16V8C21 6.89543 20.1046 6 19 6H5C3.89543 6 3 6.89543 3 8V16C3 17.1046 3.89543 18 5 18H19C20.1046 18 21 17.1046 21 16Z" stroke="currentColor" stroke-width="2"></path>
+            <path d="M12 10V14" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+            <path d="M10 12H14" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+          </svg>
+          <h3>יחידה 3: תקופת בין המלחמות</h3>
+        </div>
+        <p class="unit-description">חקר התקופה הסוערת שבין שתי מלחמות העולם: המשבר הכלכלי של 1929, עליית המשטרים הטוטליטריים באירופה, והשינויים התרבותיים והחברתיים בעשורים אלה.</p>
+        <p class="unit-tags"><span class="tag">תקופה: 1918-1939</span> <span class="tag">נושא: משברים ואידיאולוגיות</span> <span class="tag">רמה: מתקדמת</span></p>
+      </article>
+
+      <!-- Unit 4 -->
+      <article class="curriculum-card">
+        <div class="unit-header">
+          <svg data-element-type="icon" data-icon-type="svg" class="unit-icon" width="24" height="24" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+          <h3>יחידה 4: מלחמת העולם השנייה</h3>
+        </div>
+        <p class="unit-description">לימוד מקיף של המלחמה ההרסנית ביותר בהיסטוריה האנושית. נתמקד בחזיתות המרכזיות, בטקטיקות צבאיות, בשואה, ובהשלכות ארוכות הטווח על המפה הגיאו-פוליטית העולמית.</p>
+        <p class="unit-tags"><span class="tag">תקופה: 1939-1945</span> <span class="tag">נושא: מלחמה כוללת</span> <span class="tag">רמה: מתקדמת</span></p>
+      </article>
+
+      <!-- Unit 5 -->
+      <article class="curriculum-card">
+        <div class="unit-header">
+          <svg data-element-type="icon" data-icon-type="svg" class="unit-icon" width="24" height="24" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 9L12 2L21 9V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V9Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M9 22V12H15V22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+          <h3>יחידה 5: המלחמה הקרה</h3>
+        </div>
+        <p class="unit-description">ניתוח של העימות האידיאולוגי והגיאו-פוליטי בין המזרח למערב. נלמד על מרוץ החימוש הגרעיני, מלחמות פרוקסי, משבר הטילים בקובה, ותפקיד ארגונים בינלאומיים בשמירה על השלום.</p>
+        <p class="unit-tags"><span class="tag">תקופה: 1947-1991</span> <span class="tag">נושא: עימות אידיאולוגי</span> <span class="tag">רמה: בינונית</span></p>
+      </article>
+
+      <!-- Unit 6 -->
+      <article class="curriculum-card">
+        <div class="unit-header">
+          <svg data-element-type="icon" data-icon-type="svg" class="unit-icon" width="24" height="24" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"></circle>
+            <path d="M2 12H22" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+            <path d="M12 2C14.5013 4.73835 15.9228 8.29203 16 12C15.9228 15.708 14.5013 19.2616 12 22C9.49872 19.2616 8.07725 15.708 8 12C8.07725 8.29203 9.49872 4.73835 12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+          <h3>יחידה 6: דה-קולוניזציה ותנועות שחרור</h3>
+        </div>
+        <p class="unit-description">סקירה של תהליכי השחרור של מדינות אפריקה ואסיה מהשלטון הקולוניאלי. נבחן את מנהיגי תנועות השחרור, את האתגרים בבניית מדינות חדשות, ואת המורשת הקולוניאלית שנותרה.</p>
+        <p class="unit-tags"><span class="tag">תקופה: 1945-1975</span> <span class="tag">נושא: עצמאות לאומית</span> <span class="tag">רמה: בינונית</span></p>
+      </article>
+
+      <!-- Unit 7 -->
+      <article class="curriculum-card">
+        <div class="unit-header">
+          <svg data-element-type="icon" data-icon-type="svg" class="unit-icon" width="24" height="24" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+          <h3>יחידה 7: סוף המאה ה-20 – שינויים גלובליים</h3>
+        </div>
+        <p class="unit-description">חקר נפילת חומת ברלין, התפוררות ברית המועצות, והתהליכים שהובילו לסדר עולמי חדש. נדון בגלובליזציה, בהתפתחות טכנולוגית מהירה, ובהשפעתם על החברה והכלכלה העולמית.</p>
+        <p class="unit-tags"><span class="tag">תקופה: 1989-2000</span> <span class="tag">נושא: סדר עולמי חדש</span> <span class="tag">רמה: מתקדמת</span></p>
+      </article>
+
+      <!-- Unit 8 -->
+      <article class="curriculum-card">
+        <div class="unit-header">
+          <svg data-element-type="icon" data-icon-type="svg" class="unit-icon" width="24" height="24" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"></rect>
+            <path d="M9 3V21" stroke="currentColor" stroke-width="2"></path>
+            <path d="M15 3V21" stroke="currentColor" stroke-width="2"></path>
+            <path d="M3 9H21" stroke="currentColor" stroke-width="2"></path>
+            <path d="M3 15H21" stroke="currentColor" stroke-width="2"></path>
+          </svg>
+          <h3>יחידה 8: המאה ה-21 – אתגרים עכשוויים</h3>
+        </div>
+        <p class="unit-description">ניתוח של האירועים המרכזיים בעשורים האחרונים: המלחמה בטרור, המשבר הכלכלי של 2008, האביב הערבי, והאתגרים העכשוויים כמו שינויי אקלים, הגירה המונית, ועליית הפופוליזם.</p>
+        <p class="unit-tags"><span class="tag">תקופה: 2001-היום</span> <span class="tag">נושא: עולם עכשווי</span> <span class="tag">רמה: מתקדמת</span></p>
+      </article>
+    </div>
+  </div>
+
+  <!-- Bottom Divider -->
+  <div class="curriculum-divider-wrapper">
+    <svg data-no-icon-edit="true" aria-hidden="true" viewbox="0 0 1200 80" preserveaspectratio="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="curriculum-divider-glow" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" style="stop-color:rgba(124,58,237,0.4);stop-opacity:1"></stop>
+          <stop offset="50%" style="stop-color:rgba(0,212,255,0.5);stop-opacity:1"></stop>
+          <stop offset="100%" style="stop-color:rgba(124,58,237,0.4);stop-opacity:1"></stop>
+        </linearGradient>
+      </defs>
+      <!-- Diagonal cut with glow edge -->
+      <path d="M0,80 L0,0 L1200,80 L1200,80 Z" fill="var(--bg-light)"></path>
+      <path d="M0,0 L1200,80" stroke="url(#curriculum-divider-glow)" stroke-width="2" fill="var(--bg-light)"></path>
+    </svg>
+  </div>
+</section>
+
+<section class="curriculum-methodology-section" data-layout-spec="תכנית לימודים-methodology">
+  <div class="curriculum-methodology-container">
+    <div class="curriculum-methodology-content">
+      <h2 class="curriculum-methodology-title">שיטה חוזרת ללמידה של היסטוריה</h2>
+      
+      <div class="curriculum-methodology-timeline">
+        <div class="curriculum-methodology-timeline-line"></div>
+        
+        <div class="curriculum-methodology-step">
+          <div class="curriculum-methodology-node">
+            <div class="curriculum-methodology-node-inner"></div>
+          </div>
+          <div class="curriculum-methodology-step-content">
+            <h3 class="curriculum-methodology-step-title">מיפוי התקופה</h3>
+            <p class="curriculum-methodology-step-text">הבנה מעמיקה של ההקשר ההיסטורי: זיהוי הכוחות המרכזיים, המגמות החברתיות והרעיונות המובילים שעיצבו את התקופה. בניית תמונה רחבה שמאפשרת להבין את הקשרים בין האירועים השונים.</p>
+          </div>
+        </div>
+        
+        <div class="curriculum-methodology-step">
+          <div class="curriculum-methodology-node">
+            <div class="curriculum-methodology-node-inner"></div>
+          </div>
+          <div class="curriculum-methodology-step-content">
+            <h3 class="curriculum-methodology-step-title">נעילת אירועי המפתח</h3>
+            <p class="curriculum-methodology-step-text">זיהוי ושינון האירועים המכריעים, התאריכים החשובים והדמויות המשפיעות. יצירת מבנה ברור של נקודות עוגן היסטוריות שמשמשות בסיס לניתוח מעמיק ולכתיבת תשובות מובנות בבחינה.</p>
+          </div>
+        </div>
+        
+        <div class="curriculum-methodology-step">
+          <div class="curriculum-methodology-node">
+            <div class="curriculum-methodology-node-inner"></div>
+          </div>
+          <div class="curriculum-methodology-step-content">
+            <h3 class="curriculum-methodology-step-title">תרגול שאלות בחינה</h3>
+            <p class="curriculum-methodology-step-text">פתרון שאלות אמיתיות מבחינות בגרות קודמות, לימוד מבנה התשובה הנדרש והתנסות בניתוח מקורות היסטוריים. שיפור מתמיד של היכולת לארגן את הידע ולהציגו בצורה ברורה ומשכנעת.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="curriculum-methodology-image-wrapper">
+      <img data-placeholder="curriculum-methodology-image-1" data-context="A monochrome documentary-style image showing an old history textbook or archival document with visible texture and grain, evoking a sense of studying historical materials for academic excellence in a high school history matriculation exam context" width="600" height="700" src="/assets/site-curriculum-methodology-image-1.webp" alt="חומרי לימוד היסטוריים" class="curriculum-methodology-image">
+    </div>
+  </div>
+  
+  <div class="curriculum-methodology-divider-wrapper">
+    <svg data-no-icon-edit="true" aria-hidden="true" viewbox="0 0 1200 60" preserveaspectratio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,60 L0,35 Q20,32 40,36 T80,33 Q100,37 120,32 T160,35 Q180,33 200,37 T240,34 Q260,36 280,33 T320,37 Q340,34 360,36 T400,33 Q420,37 440,34 T480,36 Q500,33 520,37 T560,35 Q580,36 600,33 T640,37 Q660,34 680,36 T720,33 Q740,37 760,34 T800,36 Q820,33 840,37 T880,35 Q900,36 920,33 T960,37 Q980,34 1000,36 T1040,33 Q1060,37 1080,34 T1120,36 Q1140,33 1160,37 T1200,35 L1200,60 Z" fill="#070A10"></path>
+    </svg>
+  </div>
+</section>
+
+<section class="curriculum-resources-section" data-layout-spec="תכנית לימודים-resources">
+  <div class="curriculum-resources-container">
+    <div class="curriculum-resources-header">
+      <h2>משאבי לימוד שנבחרו בקפידה</h2>
+      <p>כל משאב תוכנן במיוחד כדי להבהיר מושגים מורכבים ולהכין אותך בצורה מיטבית לבחינת הבגרות. חומרים ממוקדים, מסודרים לפי נושאים, ומותאמים למבנה הבחינה.</p>
+    </div>
+
+    <div class="curriculum-resources-grid">
+      <article class="curriculum-resource-card">
+        <div class="curriculum-resource-icon">
+          <svg data-element-type="icon" data-icon-type="svg" width="40" height="40" viewbox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8 12H32M8 20H32M8 28H24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"></path>
+            <circle cx="30" cy="28" r="6" stroke="currentColor" stroke-width="2" fill="none"></circle>
+            <path d="M28 28L32 28M30 26L30 30" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+          </svg>
+        </div>
+        <h3>צירי זמן אינטראקטיביים</h3>
+        <p>מפות חזותיות של אירועים היסטוריים מרכזיים, עם תאריכים מדויקים וקשרים סיבתיים ברורים. כל ציר זמן בנוי לפי נושא בחינה ספציפי.</p>
+      </article>
+
+      <article class="curriculum-resource-card">
+        <div class="curriculum-resource-icon">
+          <svg data-element-type="icon" data-icon-type="svg" width="40" height="40" viewbox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="6" y="8" width="28" height="24" rx="2" stroke="currentColor" stroke-width="2" fill="none"></rect>
+            <path d="M12 16H22M12 20H28M12 24H18" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+            <circle cx="28" cy="16" r="3" fill="currentColor"></circle>
+          </svg>
+        </div>
+        <h3>מונחי מפתח מוסברים</h3>
+        <p>מילון מקיף של מושגים היסטוריים חיוניים, עם הגדרות תמציתיות ודוגמאות מהחומר. כל מונח מקושר לנושא הרלוונטי בתכנית הלימודים.</p>
+      </article>
+
+      <article class="curriculum-resource-card">
+        <div class="curriculum-resource-icon">
+          <svg data-element-type="icon" data-icon-type="svg" width="40" height="40" viewbox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10 8L30 8C31.1046 8 32 8.89543 32 10L32 30C32 31.1046 31.1046 32 30 32L10 32C8.89543 32 8 31.1046 8 30L8 10C8 8.89543 8.89543 8 10 8Z" stroke="currentColor" stroke-width="2" fill="none"></path>
+            <path d="M16 18L20 22L28 14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+        </div>
+        <h3>תשובות לדוגמה מהבחינה</h3>
+        <p>דוגמאות של תשובות מצוינות לשאלות בגרות אמיתיות, עם ניתוח מפורט של המבנה והתוכן. למד מה בודקים מחפשים ואיך לבנות תשובה משכנעת.</p>
+      </article>
+
+      <article class="curriculum-resource-card">
+        <div class="curriculum-resource-icon">
+          <svg data-element-type="icon" data-icon-type="svg" width="40" height="40" viewbox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="20" cy="20" r="12" stroke="currentColor" stroke-width="2" fill="none"></circle>
+            <path d="M20 14V20L24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M8 20H6M34 20H32M20 8V6M20 34V32" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+          </svg>
+        </div>
+        <h3>שאלות תרגול ממוקדות</h3>
+        <p>בנק שאלות מסווג לפי נושאים ורמות קושי, עם הסברים מפורטים לכל תשובה. תרגל בקצב שלך וזהה נקודות חולשה לפני הבחינה.</p>
+      </article>
+    </div>
+
+    <div class="curriculum-resources-cta">
+      <a href="/contact" class="curriculum-resources-btn">קבל הדרכה אישית</a>
+    </div>
+  </div>
+
+  <div class="curriculum-resources-divider-wrapper">
+    <svg data-no-icon-edit="true" aria-hidden="true" viewbox="0 0 1200 60" preserveaspectratio="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="curriculum-resources-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" style="stop-color:rgba(7,10,16,0);stop-opacity:1"></stop>
+          <stop offset="100%" style="stop-color:#070A10;stop-opacity:1"></stop>
+        </linearGradient>
+        <filter id="curriculum-resources-glow">
+          <feGaussianBlur stddeviation="3" result="coloredBlur"></feGaussianBlur>
+          <feMerge>
+            <feMergeNode in="coloredBlur"></feMergeNode>
+            <feMergeNode in="SourceGraphic"></feMergeNode>
+          </feMerge>
+        </filter>
+      </defs>
+      <rect x="0" y="0" width="1200" height="60" fill="url(#curriculum-resources-gradient)"></rect>
+      <path d="M0,58 Q300,52 600,58 T1200,58 L1200,60 L0,60 Z" fill="var(--bg-light)" opacity="0.15" filter="url(#curriculum-resources-glow)"></path>
+    </svg>
+  </div>
+</section>
+
+<section class="curriculum-cta-section" data-layout-spec="תכנית לימודים-cta">
+  <div class="curriculum-cta-container">
+    <h2 class="curriculum-cta-headline">לא בטוחים מאיזו יחידה להתחיל?</h2>
+    <p class="curriculum-cta-text">צרו איתנו קשר לתכנית לימודים מותאמת אישית – נעזור לכם לבחור את המסלול המתאים ביותר להצלחה בבגרות.</p>
+    <a href="/contact" class="curriculum-cta-button btn-primary">קבלו המלצה אישית</a>
+  </div>
+</section>
+  </main>
+  
+  <footer class="site-footer">
+  <div class="footer-container">
+    <div class="footer-top">
+      <div class="footer-column footer-about">
+        <img src="/assets/business-logo.webp" alt="היסטוריה לבגרות" class="logo">
+        <p class="footer-description">פלטפורמה מובילה להכנה לבגרות בהיסטוריה עם תכנים איכוtiים ותרגול מקיף</p>
+      </div>
+      
+      <div class="footer-column footer-links">
+        <h3 class="footer-title">קישורים מהירים</h3>
+        <ul class="footer-nav">
+          <li><a href="/curriculum">תכנית לימודים</a></li>
+          <li><a href="/practice">תרגול</a></li>
+          <li><a href="/contact">צור קשר</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-column footer-contact">
+        <h3 class="footer-title">יצירת קשר</h3>
+        <ul class="contact-list">
+          <li><i class="fas fa-envelope"></i> <a href="mailto:[business_email]">[business_email]</a></li>
+          <li><i class="fas fa-phone"></i> <a href="tel:[business_phone]">[business_phone]</a></li>
+          <li><a href="/"><i class="fas fa-map-marker-alt"></i> <span>[business_address]</span></a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-column footer-social">
+        <h3 class="footer-title">עקבו אחרינו</h3>
+        <div class="social-links">
+          <a href="[facebook_handle]" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+          <a href="[instagram_handle]" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="[whatsapp_handle]" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+    </div>
+    
+    <div class="footer-bottom">
+      <div class="footer-bottom-content">
+        <div class="copyright">
+          <p>© 2026 היסטוריה לבגרות. כל הזכויות שמורות.</p>
+        </div>
+        <div class="footer-bottom-links">
+          <div class="legal-links">
+            <a href="/privacy">מדיניות פרטיות</a>
+            <a href="/terms">תנאי שימוש</a><span class="separator">|</span>
+            <a href="/return-policy" aria-label="מדיניות החזרות">
+              מדיניות החזרות
+            </a>
+            <a href="/accessibility">נגישות</a>
+          </div>
+          <a href="https://zappy5.com" target="_blank" class="zappy-attribution">נוצר באמצעות Zappy</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+  
+  <a href="https://wa.me/[whatsapp_handle]" class="whatsapp-float" aria-label="WhatsApp">
+    <i class="fab fa-whatsapp"></i>
+  </a>
+  
+  <div data-integration="accessibility:toolbar"></div>
+
+    <script src="/script.js"></script>
+
+    <script id="zappy-mobile-submenu-script">
+    (function() {
+      function initMobileSubmenuToggles() {
+        if (window.innerWidth > 768) {
+          document.querySelectorAll('.mobile-submenu-toggle').forEach(function(btn) { btn.remove(); });
+          document.querySelectorAll('.sub-menu.mobile-expanded').forEach(function(menu) { menu.classList.remove('mobile-expanded'); });
+          return;
+        }
+        var items = document.querySelectorAll('.nav-menu li:has(.sub-menu), nav li:has(.sub-menu), .navbar li:has(.sub-menu), #navMenu li:has(.sub-menu)');
+        items.forEach(function(li) {
+          if (li.querySelector('.mobile-submenu-toggle')) return;
+          var submenu = li.querySelector('.sub-menu');
+          var parentLink = li.querySelector(':scope > a');
+          if (!submenu || !parentLink) return;
+          var toggleBtn = document.createElement('button');
+          toggleBtn.className = 'mobile-submenu-toggle';
+          toggleBtn.setAttribute('aria-label', 'Toggle submenu');
+          toggleBtn.setAttribute('type', 'button');
+          parentLink.insertAdjacentElement('afterend', toggleBtn);
+          toggleBtn.addEventListener('click', function(e) {
+            e.preventDefault(); e.stopPropagation();
+            document.querySelectorAll('.sub-menu.mobile-expanded').forEach(function(menu) {
+              if (menu !== submenu) { menu.classList.remove('mobile-expanded'); var t = menu.parentElement.querySelector('.mobile-submenu-toggle'); if(t) t.classList.remove('expanded'); }
+            });
+            submenu.classList.toggle('mobile-expanded');
+            toggleBtn.classList.toggle('expanded');
+          });
+        });
+      }
+      if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', initMobileSubmenuToggles); }
+      else { initMobileSubmenuToggles(); }
+      var resizeTimer; window.addEventListener('resize', function() { clearTimeout(resizeTimer); resizeTimer = setTimeout(initMobileSubmenuToggles, 250); });
+      // Re-initialize when mobile menu becomes visible (MutationObserver)
+      var observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+          if (mutation.type === 'attributes') {
+            var target = mutation.target;
+            if (target.classList && (target.classList.contains('active') || target.classList.contains('open'))) {
+              setTimeout(initMobileSubmenuToggles, 100);
+            }
+          }
+        });
+      });
+      setTimeout(function() {
+        document.querySelectorAll('.mobile-menu, .nav-menu, #navMenu, nav').forEach(function(menu) {
+          observer.observe(menu, { attributes: true, attributeFilter: ['class', 'style'] });
+        });
+      }, 500);
+    })();
+    </script>
+
+    <script id="zappy-navbar-scroll-effect">
+    (function(){var nb=document.querySelector('nav.navbar,.navbar:not(.zappy-catalog-menu)');var cm=document.querySelector('.zappy-catalog-menu');if(!nb)return;var fb='rgba(15,17,21,0.85)';var th=60;nb.style.transition='background 0.3s ease,backdrop-filter 0.3s ease,-webkit-backdrop-filter 0.3s ease,box-shadow 0.3s ease';if(cm)cm.style.transition='background 0.3s ease,backdrop-filter 0.3s ease,-webkit-backdrop-filter 0.3s ease';function onS(){var y=window.scrollY||window.pageYOffset;if(y>th){nb.style.background=fb;nb.style.backdropFilter='blur(12px)';nb.style.webkitBackdropFilter='blur(12px)';nb.style.boxShadow='0 2px 16px rgba(0,0,0,0.12)';if(cm){cm.style.background=fb;cm.style.backdropFilter='blur(12px)';cm.style.webkitBackdropFilter='blur(12px)';}}else{nb.style.background='transparent';nb.style.backdropFilter='none';nb.style.webkitBackdropFilter='none';nb.style.boxShadow='none';if(cm){cm.style.background='transparent';cm.style.backdropFilter='none';cm.style.webkitBackdropFilter='none';}}}window.addEventListener('scroll',onS,{passive:true});onS();})();
+    </script>
+</body>
+</html>
